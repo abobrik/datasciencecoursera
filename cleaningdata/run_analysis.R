@@ -49,17 +49,16 @@ data<-data[, unique(colnames(data))]
 ## select only columns containing mean or standard deviation values
 subdata<-select(data,contains("mean"),contains("std"),contains("activity"),contains("subject"))
 
-## STEP 3: 3.Uses descriptive activity names to name the activities in the data set
+## STEP 3: Uses descriptive activity names to name the activities in the data set
 ## Load activity names into table
 activities<-read.table(paste(root_path,"activity_labels.txt",sep=sep))
 
 ## merge dataset with activity names, rename column
 subdata<-merge(subdata,activities, by.x="activity", by.y="V1")
 colnames(subdata)[colnames(subdata)=="V2"] <- "activity name"
-## activity should be last
 
-## STEP 4: Appropriately labels the data set with descriptive variable names. 
-## transform columns names, remove conflicting characters ("(",")"...)
+## STEP 4: Appropriately label the data set with descriptive variable names. 
+## transform column names, remove conflicting characters (e.g. "(",")"...)
 colnames(subdata)<-make.names(colnames(subdata),unique=TRUE)
 
 ## refine names
@@ -69,7 +68,6 @@ colnames(subdata) <- sub("..", replacement="", fixed=TRUE,x=names(subdata))
 
 ## STEP 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 average.data<-aggregate(. ~ subject + activity.name, data=subdata, FUN=mean)
-## rename variables?
 
 ## FINAL: write averaged data to .txt-file
 write.table(average.data,file=paste(root_path,"average_mean_std_values.txt",sep=sep),row.name=FALSE) 
